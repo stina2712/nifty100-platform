@@ -1,0 +1,23 @@
+table,rule,msg
+analysis.xlsx,DQ-03,"Invalid company_ids found: <StringArray>
+['WIPRO']
+Length: 1, dtype: str"
+balancesheet.xlsx,DQ-03,"Invalid company_ids found: <StringArray>
+['ZYDUSLIFE', 'ZOMATO', 'WIPRO', 'VEDL', 'UNITDSPR', 'UNIONBANK',
+ 'ULTRACEMCO']
+Length: 7, dtype: str"
+cashflow.xlsx,DQ-03,"Invalid company_ids found: <StringArray>
+[      'AGTL', 'ULTRACEMCO',  'UNIONBANK',   'UNITDSPR',        'VBL',
+       'VEDL',      'WIPRO',     'ZOMATO',  'ZYDUSLIFE']
+Length: 9, dtype: str"
+documents.xlsx,DQ-03,"Invalid company_ids found: <StringArray>
+['ULTRACEMCO',  'UNIONBANK',   'UNITDSPR',        'VBL',       'VEDL',
+      'WIPRO',     'ZOMATO',  'ZYDUSLIFE']
+Length: 8, dtype: str"
+profitandloss.xlsx,DQ-03,"Invalid company_ids found: <StringArray>
+['ULTRACEMCO',  'UNIONBANK',   'UNITDSPR',        'VBL',       'VEDL',
+      'WIPRO',     'ZOMATO',  'ZYDUSLIFE']
+Length: 8, dtype: str"
+prosandcons.xlsx,DQ-03,"Invalid company_ids found: <StringArray>
+['WIPRO']
+Length: 1, dtype: str"
