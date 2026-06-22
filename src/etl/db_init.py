@@ -1,22 +1,23 @@
 import sqlite3
-import os
 
-def create_database():
-    # Define paths
-    db_path = 'nifty100.db'
-    schema_path = 'db/schema.sql'
+def create_tables():
+    conn = sqlite3.connect('nifty100.db')
+    cursor = conn.cursor()
     
-    # Remove old db if it exists to ensure a clean slate
-    if os.path.exists(db_path):
-        os.remove(db_path)
-        
-    conn = sqlite3.connect(db_path)
-    with open(schema_path, 'r') as f:
-        conn.executescript(f.read())
+    # Use IF NOT EXISTS to prevent errors on multiple runs
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS companies (
+            ticker TEXT PRIMARY KEY,
+            company_name TEXT,
+            sector TEXT
+        )
+    ''')
+    
+    # Add other tables here...
     
     conn.commit()
     conn.close()
-    print("✅ nifty100.db created successfully with 10 tables.")
+    print("✅ Database schema initialized.")
 
 if __name__ == "__main__":
-    create_database()
+    create_tables()
