@@ -1,13 +1,12 @@
-import logging
-
-# Configure logging (you can put this at the top of your file)
-logging.basicConfig(filename='output/ratio_edge_cases.log', level=logging.WARNING)
-
-def check_opm_variance(computed_opm, reported_opm, ticker):
-    if reported_opm is None:
-        return True # Cannot cross-check if data is missing
-    
-    if abs(computed_opm - reported_opm) > 1.0:
-        logging.warning(f"OPM Mismatch for {ticker}: Computed={computed_opm:.2f}%, Reported={reported_opm:.2f}%")
-        return False
-    return True
+def get_leverage_flags(de_ratio, sector, icr):
+    # D/E Warning: High leverage for non-financials
+    high_leverage_flag = False
+    if sector != 'Financials' and de_ratio is not None and de_ratio > 5.0:
+        high_leverage_flag = True
+        
+    # ICR Warning: Risk of not covering interest
+    icr_warning_flag = False
+    if icr is not None and icr < 1.5:
+        icr_warning_flag = True
+        
+    return high_leverage_flag, icr_warning_flag
