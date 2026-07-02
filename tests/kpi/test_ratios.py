@@ -1,14 +1,24 @@
-from src.analytics.ratios import get_leverage_flags
+import pytest
+from src.analytics.ratios import calculate_de_ratio, calculate_icr, calculate_asset_turnover
 
-def test_leverage_flags():
-    # Test High Leverage Flag
-    hl, _ = get_leverage_flags(6.0, 'Manufacturing', 2.0)
-    assert hl is True
-    
-    # Test ICR Warning Flag
-    _, icr_warn = get_leverage_flags(1.0, 'Manufacturing', 1.2)
-    assert icr_warn is True
-    
-    # Test Financial Sector suppression
-    hl, _ = get_leverage_flags(6.0, 'Financials', 2.0)
-    assert hl is False
+def test_de_ratio_calculation():
+    # Test normal case
+    data = {'borrowings': 100, 'equity': 100, 'reserves': 50, 'broad_sector': 'Tech'}
+    ratio, flag = calculate_de_ratio(data)
+    assert ratio == 0.67  # 100 / 150 rounded
+
+def test_de_ratio_debt_free():
+    # Test Day 09: Borrowings 0 should return 0
+    data = {'borrowings': 0, 'equity': 100, 'reserves': 50, 'broad_sector': 'Tech'}
+    ratio, flag = calculate_de_ratio(data)
+    assert ratio == 0
+
+def test_icr_zero_interest():
+    # Test Day 09: Interest 0 returns None
+    data = {'op_profit': 100, 'other_income': 10, 'interest_expense': 0}
+    assert calculate_icr(data) is None
+
+def test_asset_turnover_zero_assets():
+    # Test Day 09: Assets 0 returns None
+    data = {'revenue': 1000, 'total_assets': 0}
+    assert calculate_asset_turnover(data) is None

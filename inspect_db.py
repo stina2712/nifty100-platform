@@ -1,0 +1,6 @@
+import sqlite3
+
+conn = sqlite3.connect('nifty100.db')
+tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
+print(f"Tables in database: {tables}")
+conn.close()

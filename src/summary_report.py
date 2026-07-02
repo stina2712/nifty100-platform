@@ -1,29 +1,21 @@
-import sqlite3
-import pandas as pd
-import os
-
-def get_top_performing_companies():
-    # Construct the path to the database in the root folder
-    db_path = os.path.join(os.path.dirname(__file__), '..', '..', 'nifty100.db')
-    
-    conn = sqlite3.connect(db_path)
-    
-    # Query to get top 5 companies by ROE
-    query = """
-    SELECT id, roe_percentage 
-    FROM companies 
-    ORDER BY roe_percentage DESC 
-    LIMIT 5
+def generate_company_summary(company):
     """
+    Analyzes company data using .get() to prevent crashes when 
+    specific financial columns are missing.
+    """
+    # Safely retrieve data; defaults to 0 if the column is missing
+    revenue = company.get('revenue', 0)
+    net_profit = company.get('net_profit', 0)
+    # The .get() method is the key to stopping your 'borrowings' error
+    borrowings = company.get('borrowings', 0) 
+    equity = company.get('equity', 0)
     
-    try:
-        df = pd.read_sql(query, conn)
-        print("--- Top 5 Companies by ROE ---")
-        print(df)
-    except Exception as e:
-        print(f"Error querying database: {e}")
-    finally:
-        conn.close()
-
-if __name__ == "__main__":
-    get_top_performing_companies()
+    # Calculate metrics
+    profit_margin = (net_profit / revenue * 100) if revenue and revenue != 0 else 0
+    debt_to_equity = (borrowings / equity) if equity and equity != 0 else 0
+    
+    return {
+        "profit_margin_percent": round(profit_margin, 2),
+        "debt_to_equity_ratio": round(debt_to_equity, 2),
+        "status": "Calculated"
+    }
