@@ -1,0 +1,7 @@
+# config/screener_config.yaml
+thresholds:
+  roe_min: 15
+  de_max: 1.0
+  fcf_min: 0
+  rev_cagr_5yr_min: 10
+  # ... (other 11 metrics defined in project plan)

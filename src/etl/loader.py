@@ -1,30 +1,17 @@
 import sqlite3
+import pandas as pd
 import os
 
-def get_all_company_data():
-    """Fetches all rows from the profitandloss database table."""
-    db_path = 'nifty100.db'
-    
-    if not os.path.exists(db_path):
-        raise FileNotFoundError(f"Database file {db_path} not found!")
+# Ensure this matches your pipeline output filename
+csv_path = 'output/final_master_table.csv' 
+db_path = 'nifty100.db'
 
+if os.path.exists(csv_path):
+    df = pd.read_csv(csv_path)
     conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    
-    table_name = 'profitandloss' 
-    
-    try:
-        cursor.execute(f"SELECT * FROM {table_name}")
-        data = [dict(row) for row in cursor.fetchall()]
-        conn.close()
-        return data
-    except sqlite3.OperationalError as e:
-        conn.close()
-        raise Exception(f"Database error: {e}. Ensure table '{table_name}' exists.")
-
-def normalize_ticker(ticker):
-    return str(ticker).strip().upper()
-
-def normalize_year(year):
-    return int(year)
+    # The screener engine expects these specific columns
+    df.to_sql('financial_ratios', conn, if_exists='replace', index=False)
+    conn.close()
+    print("✅ Step 1: Database populated successfully.")
+else:
+    print(f"❌ Error: {csv_path} not found. Check your 'output' folder.")
