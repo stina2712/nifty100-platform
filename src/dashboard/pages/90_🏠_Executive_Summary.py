@@ -1,10 +1,15 @@
 import streamlit as st
 import pandas as pd
+from src.dashboard.components import render_page_header, render_page_footer
+from src.etl.loader import render_data_status
 
 st.set_page_config(page_title="Executive Summary", page_icon="🏠", layout="wide")
-st.title("🏠 Executive Financial Command Center")
 
-st.markdown("Your centralized macro overview combining total net worth, active liabilities, liquidity buffers, and portfolio performance.")
+# 1. Standardized Header Component
+render_page_header(
+    "🏠 Executive Financial Command Center", 
+    "Your centralized macro overview combining total net worth, active liabilities, liquidity buffers, and portfolio performance."
+)
 
 @st.cache_data
 def get_executive_kpis():
@@ -15,6 +20,9 @@ def get_executive_kpis():
     })
 
 exec_df = get_executive_kpis()
+
+# 2. Data Status Indicator
+render_data_status(exec_df, "Executive KPI Dataset")
 
 st.markdown("---")
 st.subheader("Executive KPI Summary")
@@ -38,3 +46,6 @@ with st.form("executive_form"):
 
 st.markdown("---")
 st.info("**Executive Insight:** Reviewing your high-level command center weekly ensures all asset classes, emergency reserves, and liabilities remain aligned with your long-term goals.")
+
+# 3. Standardized Footer Component
+render_page_footer()
