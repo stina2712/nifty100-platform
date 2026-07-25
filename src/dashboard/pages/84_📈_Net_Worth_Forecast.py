@@ -1,10 +1,15 @@
 import streamlit as st
 import pandas as pd
+from src.dashboard.components import render_page_header, render_page_footer
+from src.etl.loader import render_data_status
 
 st.set_page_config(page_title="Net Worth Forecast", page_icon="📈", layout="wide")
-st.title("📈 Net Worth & Asset Growth Forecasting Engine")
 
-st.markdown("Project your multi-year wealth compounding trajectory, simulate asset appreciation rates, and track your path to financial independence.")
+# 1. Standardized Header Component
+render_page_header(
+    "📈 Net Worth & Asset Growth Forecasting Engine", 
+    "Project your multi-year wealth compounding trajectory, simulate asset appreciation rates, and track your path to financial independence."
+)
 
 @st.cache_data
 def get_net_worth_projection():
@@ -17,6 +22,9 @@ def get_net_worth_projection():
     })
 
 forecast_df = get_net_worth_projection()
+
+# 2. Data Status Indicator
+render_data_status(forecast_df, "Net Worth Projection Dataset")
 
 st.markdown("---")
 st.subheader("Multi-Year Net Worth Trajectory Matrix")
@@ -40,3 +48,6 @@ with st.form("forecast_form"):
 
 st.markdown("---")
 st.info("**Forecasting Insight:** The compounding effect accelerates dramatically in later years because your investment returns begin generating substantial returns of their own.")
+
+# 3. Standardized Footer Component
+render_page_footer()
