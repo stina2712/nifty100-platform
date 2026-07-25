@@ -46,6 +46,16 @@ def load_sql_query(query: str) -> pd.DataFrame:
     with get_connection() as conn:
         return pd.read_sql(query, conn)
 
+def safe_load_query(query: str, fallback_message: str = "Unable to fetch data.") -> pd.DataFrame:
+    """
+    Safely executes a SQL query with built-in error handling for production apps.
+    """
+    try:
+        return load_sql_query(query)
+    except Exception as e:
+        st.error(f"⚠️ {fallback_message} Details: {e}")
+        return pd.DataFrame()
+
 if __name__ == "__main__":
     # Example test execution if run directly
     print("Running loader module...")
