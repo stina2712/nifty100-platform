@@ -1,10 +1,15 @@
 import streamlit as st
 import pandas as pd
+from src.dashboard.components import render_page_header, render_page_footer
+from src.etl.loader import render_data_status
 
 st.set_page_config(page_title="Dividend Income Tracker", page_icon="💵", layout="wide")
-st.title("💵 Dividend & Passive Income Cash Flow Tracker")
 
-st.markdown("Track dividend payouts, monitor annual yield-on-cost, and forecast your passive monthly cash flow streams.")
+# 1. Standardized Header Component
+render_page_header(
+    "💵 Dividend & Passive Income Cash Flow Tracker", 
+    "Track dividend payouts, monitor annual yield-on-cost, and forecast your passive monthly cash flow streams."
+)
 
 @st.cache_data
 def get_dividend_portfolio():
@@ -17,6 +22,9 @@ def get_dividend_portfolio():
     })
 
 div_df = get_dividend_portfolio()
+
+# 2. Data Status Indicator
+render_data_status(div_df, "Dividend Portfolio Dataset")
 
 st.markdown("---")
 st.subheader("Active Dividend-Yield Portfolio Ledger")
@@ -40,3 +48,6 @@ with st.form("dividend_form"):
 
 st.markdown("---")
 st.info("**Dividend Insight:** Reinvesting dividends during your accumulation phase leverages the power of compounding, allowing you to buy more units without adding fresh capital.")
+
+# 3. Standardized Footer Component
+render_page_footer()
