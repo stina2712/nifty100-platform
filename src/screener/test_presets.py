@@ -1,6 +1,6 @@
 import sqlite3
 import pandas as pd
-from engine import get_preset_results # Ensure your engine functions are exported
+from src.screener.engine import get_preset_results  # Fixed import path
 
 conn = sqlite3.connect('nifty100.db')
 df = pd.read_sql("SELECT * FROM financial_ratios", conn)

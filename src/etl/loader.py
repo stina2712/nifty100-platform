@@ -1,17 +1,43 @@
 import sqlite3
 import pandas as pd
-import os
+from pathlib import Path
 
-# Ensure this matches your pipeline output filename
-csv_path = 'output/final_master_table.csv' 
-db_path = 'nifty100.db'
+DB_PATH = Path("db/nifty100.db")
+OUTPUT_DIR = Path("output")
+OUTPUT_MASTER = OUTPUT_DIR / "final_master_table.csv"
 
-if os.path.exists(csv_path):
-    df = pd.read_csv(csv_path)
-    conn = sqlite3.connect(db_path)
-    # The screener engine expects these specific columns
-    df.to_sql('financial_ratios', conn, if_exists='replace', index=False)
-    conn.close()
-    print("✅ Step 1: Database populated successfully.")
-else:
-    print(f"❌ Error: {csv_path} not found. Check your 'output' folder.")
+def get_connection():
+    """Creates and returns a SQLite database connection."""
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    return sqlite3.connect(DB_PATH)
+
+def load_data_to_db(file_path: str, table_name: str):
+    """
+    Loads a CSV file into the specified SQLite database table.
+    Accepts file_path and table_name to match orchestrator calls.
+    """
+    path = Path(file_path)
+    if not path.exists():
+        raise FileNotFoundError(f"❌ Error: {file_path} not found. Check your file paths.")
+    
+    df = pd.read_csv(path)
+    with get_connection() as conn:
+        df.to_sql(table_name, conn, if_exists="replace", index=False)
+    print(f"Successfully loaded {file_path} into table '{table_name}'.")
+
+def get_all_company_data() -> pd.DataFrame:
+    """
+    Retrieves the final master table data as a DataFrame, 
+    ensuring output/final_master_table.csv exists.
+    """
+    if not OUTPUT_MASTER.exists():
+        raise FileNotFoundError(f"❌ Error: {OUTPUT_MASTER} not found. Check your 'output' folder.")
+    return pd.read_csv(OUTPUT_MASTER)
+
+if __name__ == "__main__":
+    # Example test execution if run directly
+    print("Running loader module...")
+    if OUTPUT_MASTER.exists():
+        load_data_to_db(str(OUTPUT_MASTER), "final_master")
+    else:
+        print("Master table not yet generated. Run your ETL transformation script first.")

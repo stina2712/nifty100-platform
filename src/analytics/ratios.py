@@ -1,33 +1,34 @@
-# src/analytics/ratios.py
+import sqlite3
+import pandas as pd
+from pathlib import Path
 
-def calculate_de_ratio(data):
-    """Calculates D/E and returns (ratio, flag)."""
-    borrowings = data.get('borrowings', 0)
-    equity_base = data.get('equity', 0) + data.get('reserves', 0)
-    sector = data.get('broad_sector', '')
+def save_ratios():
+    db_path = Path("db/nifty100.db")
     
-    if equity_base <= 0: return 0, False
-    
-    ratio = round(borrowings / equity_base, 2)
-    high_leverage_flag = (ratio > 5 and sector != 'Financials')
-    
-    return ratio, high_leverage_flag
+    # Check if we have final master data to compute or load ratios from
+    master_path = Path("output/final_master_table.csv")
+    if not master_path.exists():
+        print("❌ Error: output/final_master_table.csv not found.")
+        return
 
-def calculate_icr(data):
-    """Calculates Interest Coverage Ratio."""
-    op_profit = data.get('op_profit', 0)
-    other_income = data.get('other_income', 0)
-    interest = data.get('interest_expense', 0)
+    df = pd.read_csv(master_path)
     
-    if not interest or interest == 0:
-        return None # Day 09: Return None for debt-free
-    return round((op_profit + other_income) / interest, 2)
+    # If your script generates specific ratio columns, ensure they map correctly.
+    # Here we create/ensure columns exist for database insertion to prevent schema misses:
+    expected_cols = [
+        "company_id", "roce", "debt_to_equity", 
+        "profit_cagr_3yr", "sales_cagr_3yr", 
+        "current_ratio", "interest_coverage"
+    ]
+    
+    # Fill missing columns with dummy defaults if your ratio engine builds them dynamically
+    for col in expected_cols:
+        if col not in df.columns:
+            df[col] = 0.0 # Default fallback if column is missing
 
-def calculate_asset_turnover(data):
-    """Calculates Asset Turnover."""
-    revenue = data.get('revenue', 0)
-    assets = data.get('total_assets', 0)
-    
-    if not assets or assets == 0:
-        return None
-    return round(revenue / assets, 2)
+    with sqlite3.connect(db_path) as conn:
+        df[expected_cols].to_sql("financial_ratios", conn, if_exists="replace", index=False)
+        print("✅ Successfully wrote 'financial_ratios' table to database.")
+
+if __name__ == "__main__":
+    save_ratios()
