@@ -1,11 +1,19 @@
 import streamlit as st
 import pandas as pd
-from src.dashboard.components import render_page_header, render_page_footer
 from src.etl.loader import render_data_status
 
 st.set_page_config(page_title="Dividend Income Tracker", page_icon="💵", layout="wide")
 
-# 1. Standardized Header Component
+# Standardized Header Component
+def render_page_header(title, description):
+    st.title(title)
+    st.markdown(description)
+
+# Standardized Footer Component
+def render_page_footer():
+    st.markdown("---")
+    st.caption("Nifty 100 Financial Analytics Dashboard © 2026")
+
 render_page_header(
     "💵 Dividend & Passive Income Cash Flow Tracker", 
     "Track dividend payouts, monitor annual yield-on-cost, and forecast your passive monthly cash flow streams."
@@ -23,7 +31,6 @@ def get_dividend_portfolio():
 
 div_df = get_dividend_portfolio()
 
-# 2. Data Status Indicator
 render_data_status(div_df, "Dividend Portfolio Dataset")
 
 st.markdown("---")
@@ -49,5 +56,4 @@ with st.form("dividend_form"):
 st.markdown("---")
 st.info("**Dividend Insight:** Reinvesting dividends during your accumulation phase leverages the power of compounding, allowing you to buy more units without adding fresh capital.")
 
-# 3. Standardized Footer Component
 render_page_footer()
