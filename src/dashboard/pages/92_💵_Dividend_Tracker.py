@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from src.etl.loader import render_data_status
 
 st.set_page_config(page_title="Dividend Income Tracker", page_icon="💵", layout="wide")
 
@@ -13,6 +12,10 @@ def render_page_header(title, description):
 def render_page_footer():
     st.markdown("---")
     st.caption("Nifty 100 Financial Analytics Dashboard © 2026")
+
+# Self-contained Data Status Indicator
+def render_data_status(df, dataset_name="Dataset"):
+    st.success(f"✅ **{dataset_name}** loaded successfully ({len(df)} records active).")
 
 render_page_header(
     "💵 Dividend & Passive Income Cash Flow Tracker", 
