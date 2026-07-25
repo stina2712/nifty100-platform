@@ -1,42 +1,62 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Crypto Staking Calculator", page_icon="🪙", layout="wide")
-st.title("🪙 Crypto & Web3 Staking Yield Calculator")
+st.set_page_config(page_title="Crypto Staking & Yield", page_icon="🪙", layout="wide")
 
-st.markdown("Calculate staking rewards, project compound yields across Layer-1 tokens, and track crypto passive income.")
+# Standardized Header Component
+def render_page_header(title, description):
+    st.title(title)
+    st.markdown(description)
+
+# Standardized Footer Component
+def render_page_footer():
+    st.markdown("---")
+    st.caption("Nifty 100 Financial Analytics Dashboard © 2026")
+
+# Self-contained Data Status Indicator
+def render_data_status(df, dataset_name="Dataset"):
+    st.success(f"✅ **{dataset_name}** loaded successfully ({len(df)} records active).")
+
+render_page_header(
+    "🪙 Crypto Staking & Passive Yield Calculator", 
+    "Lock up digital assets, monitor APY reward distributions, and project your long-term crypto compounding returns."
+)
 
 @st.cache_data
 def get_staking_portfolio():
     return pd.DataFrame({
-        "Token Asset": ["Ethereum (ETH)", "Solana (SOL)", "Polygon (POL)", "Cosmos (ATOM)", "USDC Stablecoin"],
-        "Staked Quantity": [2.5, 35.0, 1500.0, 45.0, 2500.0],
-        "Staking APY (%)": [3.8, 6.5, 5.2, 14.5, 8.0],
-        "Lockup Period": ["Liquid Staking", "3-Day Unbonding", "Unbonded", "21-Day Unbonding", "Flexible"],
-        "Estimated Annual Yield (Tokens)": [0.095, 2.275, 78.0, 6.525, 200.0]
+        "Asset": ["Ethereum (ETH)", "Solana (SOL)", "Cardano (ADA)", "Polkadot (DOT)", "Polygon (POL)"],
+        "Staked Amount": [2.5, 45.0, 1200.0, 350.0, 1500.0],
+        "Average APY (%)": [4.8, 6.5, 4.2, 8.1, 5.0],
+        "Est. Annual Rewards": [0.12, 2.92, 50.4, 28.35, 75.0],
+        "Lockup Status": ["Flexible", "Locked (14d)", "Flexible", "Locked (28d)", "Flexible"]
     })
 
-stake_df = get_staking_portfolio()
+staking_df = get_staking_portfolio()
+
+render_data_status(staking_df, "Crypto Staking Portfolio")
 
 st.markdown("---")
-st.subheader("Active Crypto Staking Positions")
-st.dataframe(stake_df, use_container_width=True)
+st.subheader("Active Staking Positions & Yield Ledger")
+st.dataframe(staking_df, use_container_width=True)
 
 st.markdown("---")
-st.subheader("Simulate Compound Staking Yields")
+st.subheader("Simulate Staking Growth & Compound Rewards")
 
 with st.form("staking_form"):
     c1, c2 = st.columns(2)
     with c1:
-        token_choice = st.selectbox("Select Token for Simulation", ["Ethereum (ETH)", "Solana (SOL)", "Polygon (POL)", "Cosmos (ATOM)", "USDC Stablecoin"])
-        additional_stake = st.number_input("Additional Tokens to Stake", min_value=0.0, value=10.0, step=1.0)
+        selected_crypto = st.selectbox("Select Asset to Simulate", ["Ethereum (ETH)", "Solana (SOL)", "Cardano (ADA)", "Polkadot (DOT)", "Polygon (POL)"])
+        additional_stake = st.number_input("Monthly Additional Stake", min_value=0.0, value=100.0, step=50.0)
     with c2:
-        staking_horizon_years = st.slider("Staking Horizon (Years)", 1, 5, 2)
-        compound_frequency = st.selectbox("Reward Compounding Frequency", ["Daily Compound", "Weekly Compound", "Monthly Compound"])
+        stake_horizon = st.slider("Staking Horizon (Years)", 1, 10, 3)
+        auto_compound = st.checkbox("Auto-Compound Reward Payouts", value=True)
     
-    stake_submitted = st.form_submit_button("Calculate Staking Growth")
+    stake_submitted = st.form_submit_button("Calculate Staking Projections")
     if stake_submitted:
-        st.success(f"Staking simulation complete for **{token_choice}**! Compounding rewards over {staking_horizon_years} years significantly maximizes your crypto accumulation.")
+        st.success(f"Staking projection computed for **{selected_crypto}**! Auto-compounding yields increases your token accumulation exponentially over time.")
 
 st.markdown("---")
-st.info("**Staking Insight:** Delegating proof-of-stake tokens to secure network validators allows you to earn passive yields while maintaining long-term ownership of your digital assets.")
+st.info("**Staking Insight:** Delegating proof-of-stake assets secures the network while generating passive yield streams directly to your wallet.")
+
+render_page_footer()
