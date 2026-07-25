@@ -1,10 +1,15 @@
 import streamlit as st
 import pandas as pd
+from src.dashboard.components import render_page_header, render_page_footer
+from src.etl.loader import render_data_status
 
 st.set_page_config(page_title="Mortgage & Loan Calculator", page_icon="💳", layout="wide")
-st.title("💳 Advanced Mortgage & Loan Payoff Simulator")
 
-st.markdown("Model loan amortization schedules, calculate interest savings through prepayments, and optimize your debt-free timeline.")
+# 1. Standardized Header Component
+render_page_header(
+    "💳 Advanced Mortgage & Loan Payoff Simulator", 
+    "Model loan amortization schedules, calculate interest savings through prepayments, and optimize your debt-free timeline."
+)
 
 @st.cache_data
 def get_loan_summary():
@@ -17,6 +22,9 @@ def get_loan_summary():
     })
 
 loan_df = get_loan_summary()
+
+# 2. Data Status Indicator
+render_data_status(loan_df, "Loan Portfolio Dataset")
 
 st.markdown("---")
 st.subheader("Active Loan Portfolios & EMIs")
@@ -40,3 +48,6 @@ with st.form("loan_calc_form"):
 
 st.markdown("---")
 st.info("**Loan Insight:** Allocating even a small lump-sum annual prepayment toward high-interest loans can slash your total interest burden by lakhs over the life of the loan.")
+
+# 3. Standardized Footer Component
+render_page_footer()
