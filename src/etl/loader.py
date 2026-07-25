@@ -56,6 +56,15 @@ def safe_load_query(query: str, fallback_message: str = "Unable to fetch data.")
         st.error(f"⚠️ {fallback_message} Details: {e}")
         return pd.DataFrame()
 
+def render_data_status(df: pd.DataFrame, dataset_name: str = "Dataset"):
+    """
+    Renders a clean metrics badge in Streamlit showing row count and status.
+    """
+    if df.empty:
+        st.warning(f"⚠️ {dataset_name} is currently empty or unavailable.")
+    else:
+        st.success(f"✅ {dataset_name} loaded successfully ({len(df):,} records active).")
+
 if __name__ == "__main__":
     # Example test execution if run directly
     print("Running loader module...")
